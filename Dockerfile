@@ -1,5 +1,9 @@
 # 基础镜像
-FROM centos:latest
+FROM centos
+
+# 使用阿里云的源
+RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo && \
+    yum makecache
 
 # 安装 EPEL 和 Python 依赖
 RUN yum install -y epel-release && \
@@ -13,11 +17,11 @@ WORKDIR /test_automation
 COPY requirements.txt .
 
 # 升级 pip 并安装依赖
-RUN pip3 install --upgrade pip
-RUN pip3 install --no-cache-dir -r requirements.txt --timeout=400
+RUN pip install --upgrade pip -i https://mirrors.aliyun.com/pypi/simple
+RUN pip install --no-cache-dir -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple --timeout=400
 
 # 复制项目代码到工作目录
 COPY . .
 
-# 设置默认命令
-CMD ["pytest", "tests/test_example.py"]
+# 设置默认命令，运行所有测试脚本
+CMD ["pytest", "tests/"]
