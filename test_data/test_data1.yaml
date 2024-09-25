@@ -1,0 +1,7 @@
+test_cases:
+  - url: "https://www.baidu.com/"
+    search_keyword: "automation pytest3"
+  - url: "https://www.baidu.com/"
+    search_keyword: "automation pytest2"
+  - url: "https://www.baidu.com/"
+    search_keyword: "automation pytest"
