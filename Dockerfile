@@ -1,5 +1,5 @@
 # 基础镜像
-FROM centos
+FROM centos:7
 
 # 使用阿里云的源
 RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo && \
