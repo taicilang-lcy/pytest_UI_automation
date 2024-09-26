@@ -26,7 +26,7 @@ def browser():
     if driver is None:
         # for CICD container automation running
         chrome_options = Options()
-        chrome_options.add_argument('window-size=1920x1080')  # 设置浏览器窗口大小
+        #chrome_options.add_argument('window-size=1920x1080')  # 设置浏览器窗口大小
         chrome_options.add_argument("--no-sandbox")  # 添加这个参数
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-dev-shm-usage')  # 禁用 /dev/shm 使用
@@ -35,12 +35,11 @@ def browser():
 
         # driver.set_window_size(1550, 1000)
         # driver.set_window_position(1600,0)
-
         # 获取屏幕的宽度和高度       设置窗口大小和位置，分屏到右半边
-        screen_width = driver.execute_script("return window.screen.width")
-        screen_height = driver.execute_script("return window.screen.height")
-        driver.set_window_size(screen_width // 2, screen_height)
-        driver.set_window_position(screen_width // 2, 0)
+        # screen_width = driver.execute_script("return window.screen.width")
+        # screen_height = driver.execute_script("return window.screen.height")
+        # driver.set_window_size(screen_width // 2, screen_height)
+        # driver.set_window_position(screen_width // 2, 0)
 
         logger.info("Starting test session setup, Chrome has been launched!")
         # driver.maximize_window()

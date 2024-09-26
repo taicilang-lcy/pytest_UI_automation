@@ -57,7 +57,7 @@ pipeline {
                         sh """
                         ssh -o StrictHostKeyChecking=no root@${ECS_IP} '
                             echo "Running tests using Docker image ${DOCKER_IMAGE}..."
-                            docker run -v /usr/automation_pipeline/pytest_UI_automation:/pytest_UI_automation ${DOCKER_IMAGE} pytest test_suites/
+                            docker run -v /usr/automation_pipeline/pytest_UI_automation:/pytest_UI_automation ${DOCKER_IMAGE} pytest --alluredir=/pytest_UI_automation/report/ test_suites/
                         '
                         """
                     }
