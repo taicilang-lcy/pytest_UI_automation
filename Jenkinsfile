@@ -71,7 +71,7 @@ pipeline {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
                         echo "Copying allure results from ECS..."
-                        scp -o StrictHostKeyChecking=no root@${ECS_IP}:/usr/automation_pipeline/pytest_UI_automation/report/ ${WORKSPACE}/report/
+                        scp -o StrictHostKeyChecking=no -r root@${ECS_IP}:/usr/automation_pipeline/pytest_UI_automation/report/ ${WORKSPACE}/report/
                         """
                     }
                 }
