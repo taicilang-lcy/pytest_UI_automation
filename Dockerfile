@@ -4,8 +4,9 @@ FROM registry.cn-hangzhou.aliyuncs.com/lcy-dockerhub/python:3.9.20-slim
 # 设置工作目录
 WORKDIR /pytest_UI_automation
 
-# 安装必要的依赖
-RUN apt-get update && apt-get install -y \
+# 设置阿里云的 apt 源并安装必要的依赖
+RUN sed -i 's|http://deb.debian.org|http://mirrors.aliyun.com|g' /etc/apt/sources.list && \
+    apt-get update && apt-get install -y --no-install-recommends \
     wget \
     unzip \
     libnss3 \
