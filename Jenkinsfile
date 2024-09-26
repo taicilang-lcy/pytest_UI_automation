@@ -64,6 +64,29 @@ pipeline {
                 }
             }
         }
+
+        stage('Copy Allure Results') {
+            steps {
+                script {
+                    sshagent([SSH_CREDENTIALS]) {
+                        sh """
+                        echo "Copying allure results from ECS..."
+                        scp -o StrictHostKeyChecking=no root@${ECS_IP}:/usr/automation_pipeline/pytest_UI_automation/report/ ${WORKSPACE}/report/
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Generate Allure Report') {
+            steps {
+                allure([
+                    reportBuildPolicy: 'ALWAYS',
+                    includeProperties: false,
+                    results: [[path: 'report']]
+                ])
+            }
+        }
     }
 
     post {
