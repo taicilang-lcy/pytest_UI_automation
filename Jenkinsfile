@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_IMAGE = 'auto-test-image'  // Docker 镜像名称
+        DOCKER_IMAGE = 'pytest-image-slim'  // pytest slim 镜像名称
         ECS_IP = '8.149.129.172'          // 阿里云 ECS 的 IP 地址
         SSH_CREDENTIALS = 'ecs-ssh-credentials' // Jenkins 中设置的 SSH 凭据 ID
     }
@@ -11,7 +11,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // 从 GitHub 仓库克隆代码，使用 HTTPS 方式
-                git branch: 'main', url: 'https://github.com/taicilang-lcy/Automation_Test.git', credentialsId: 'github-automation-test-token'
+                git branch: 'main', url: 'https://github.com/taicilang-lcy/pytest_UI_automation.git', credentialsId: 'github-automation-test-token'
             }
         }
 
@@ -36,7 +36,7 @@ pipeline {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no root@${ECS_IP} 'docker run ${DOCKER_IMAGE} pytest tests/'
+                        ssh -o StrictHostKeyChecking=no root@${ECS_IP} 'docker run ${DOCKER_IMAGE} pytest test_suites/'
                         """
                     }
                 }
