@@ -3,6 +3,7 @@ import pytest
 import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from utils.db_manager import DatabaseManager  # 从 utils 文件夹导入
 #from Automation_UI.utils.testdata_file import json_data, yaml_data  # 从 utils 文件夹导入测试数据文件处理函数
@@ -23,7 +24,11 @@ def browser():
     global driver
     #"""在整个测试会话中只打开一次浏览器"""
     if driver is None:
-        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+        # for CICD container automation running
+        chrome_options = Options()
+        chrome_options.add_argument("--no-sandbox")  # 添加这个参数
+        chrome_options.add_argument('--disable-dev-shm-usage')  # 禁用 /dev/shm 使用
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
         # driver.set_window_size(1550, 1000)
         # driver.set_window_position(1600,0)
 
