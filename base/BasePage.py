@@ -4,6 +4,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException, StaleElementReferenceException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class BasePage(object):
 
@@ -33,8 +37,32 @@ class BasePage(object):
             self.driver.find_element(*element).send_keys(content)
 
         # 点击 Click
-        def click(self,element):
-            self.driver.find_element(*element).click()
+        # def click(self,element):
+        #     self.driver.find_element(*element).click()
+
+        # 点击 Click
+        def click(self, element, timeout=10):
+            try:
+                # 等待元素可点击
+                wait = WebDriverWait(self.driver, timeout)
+                clickable_element = wait.until(EC.element_to_be_clickable(element))
+                clickable_element.click()
+            except ElementClickInterceptedException:
+                print(f"Element click intercepted for: {element}")
+                # 可以添加处理逻辑，例如等待某个元素消失或关闭广告等
+                self.handle_click_interception(element)
+            except NoSuchElementException:
+                print(f"Element not found: {element}")
+            except StaleElementReferenceException:
+                print(f"Stale element reference: {element}. Retrying...")
+                self.click(element)  # 尝试再次点击
+            except Exception as e:
+                print(f"An error occurred: {str(e)}")
+
+        def handle_click_interception(self, element):
+            # 在这里可以添加处理点击被拦截的逻辑
+            print(f"Attempting to handle interception for: {element}")
+            # 例如关闭弹窗、等待等
 
         def find_element(self, by, value, timeout=10):
             """
