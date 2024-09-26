@@ -4,8 +4,9 @@ FROM registry.cn-hangzhou.aliyuncs.com/lcy-dockerhub/python:3.9.20-slim
 # 设置工作目录
 WORKDIR /pytest_UI_automation
 
-# 设置阿里云的 apt 源并安装必要的依赖
-RUN sed -i 's|http://deb.debian.org|http://mirrors.aliyun.com|g' /etc/apt/sources.list && \
+# 添加阿里云的 apt 源并安装必要的依赖
+RUN echo "deb http://mirrors.aliyun.com/debian/ stable main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb-src http://mirrors.aliyun.com/debian/ stable main contrib non-free" >> /etc/apt/sources.list && \
     apt-get update && apt-get install -y --no-install-recommends \
     wget \
     unzip \
