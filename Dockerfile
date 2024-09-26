@@ -4,7 +4,7 @@ FROM registry.cn-hangzhou.aliyuncs.com/lcy-dockerhub/python:3.9.20-slim
 # 设置工作目录
 WORKDIR /pytest_UI_automation
 
-# 添加阿里云的 apt 源并安装必要的依赖
+# 设置阿里云的 apt 源并安装必要的依赖
 RUN echo "deb http://mirrors.aliyun.com/debian/ stable main contrib non-free" > /etc/apt/sources.list && \
     echo "deb-src http://mirrors.aliyun.com/debian/ stable main contrib non-free" >> /etc/apt/sources.list && \
     apt-get update && apt-get install -y --no-install-recommends \
@@ -24,12 +24,23 @@ RUN echo "deb http://mirrors.aliyun.com/debian/ stable main contrib non-free" > 
     fonts-liberation \
     libappindicator3-1 \
     xdg-utils \
+    libglib2.0-0 \
+    libxshmfence1 \
+    libcurl3-gnutls \
+    libcurl3-nss \
+    libcurl4 \
+    libdrm2 \
+    libgbm1 \
+    libvulkan1 \
     && rm -rf /var/lib/apt/lists/*
 
 # 下载并安装 Google Chrome
 RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     dpkg -i google-chrome-stable_current_amd64.deb || apt-get -fy install && \
     rm google-chrome-stable_current_amd64.deb
+
+# 检查 Chrome 版本
+RUN google-chrome --version
 
 # 复制 requirements.txt 并安装依赖
 COPY requirements.txt .
