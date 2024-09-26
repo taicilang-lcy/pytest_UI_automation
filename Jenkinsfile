@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         DOCKER_IMAGE = 'pytest-image-slim'  // pytest slim 镜像名称
-        ECS_IP = '8.149.129.172'          // 阿里云 ECS 的 IP 地址
+        ECS_IP = '8.149.129.172'              // 阿里云 ECS 的 IP 地址
         SSH_CREDENTIALS = 'ecs-ssh-credentials' // Jenkins 中设置的 SSH 凭据 ID
     }
 
@@ -15,16 +15,35 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image on ECS') {
+        stage('Update Code on ECS') {
             steps {
-                // SSH 到阿里云 ECS，并在远程服务器上构建 Docker 容器
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
                         ssh -o StrictHostKeyChecking=no root@${ECS_IP} '
-                            cd /usr/automation_pipeline/pytest_UI_automation && 
-                            /usr/bin/git pull && 
-                            docker build -t ${DOCKER_IMAGE} .'
+                            cd /usr/automation_pipeline/pytest_UI_automation &&
+                            /usr/bin/git pull
+                        '
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker Image on ECS') {
+            steps {
+                script {
+                    sshagent([SSH_CREDENTIALS]) {
+                        sh """
+                        ssh -o StrictHostKeyChecking=no root@${ECS_IP} '
+                            cd /usr/automation_pipeline/pytest_UI_automation &&
+                            if [[ \$(docker images -q ${DOCKER_IMAGE}) == "" ]]; then
+                                echo "Building new Docker image ${DOCKER_IMAGE}..."
+                                docker build -t ${DOCKER_IMAGE} .
+                            else
+                                echo "Using existing image ${DOCKER_IMAGE}"
+                            fi
+                        '
                         """
                     }
                 }
@@ -36,7 +55,10 @@ pipeline {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no root@${ECS_IP} 'docker run ${DOCKER_IMAGE} pytest test_suites/'
+                        ssh -o StrictHostKeyChecking=no root@${ECS_IP} '
+                            echo "Running tests using Docker image ${DOCKER_IMAGE}..."
+                            docker run -v /usr/automation_pipeline/pytest_UI_automation:/pytest_UI_automation ${DOCKER_IMAGE} pytest test_suites/
+                        '
                         """
                     }
                 }
