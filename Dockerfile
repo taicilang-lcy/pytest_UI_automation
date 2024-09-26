@@ -55,4 +55,5 @@ RUN pip install --no-cache-dir -r requirements.txt -i https://mirrors.aliyun.com
 COPY . .
 
 # 设置默认命令，运行 test_suites 目录下的测试，并将 Allure 结果生成到 report/allure-results 目录
-CMD ["pytest", "test_suites/", "--alluredir=report/allure-results"]
+# 这里去掉，命令在Jenkinsfile里定义，会更灵活
+#CMD ["pytest", "test_suites/", "--alluredir=report/allure-results"]
