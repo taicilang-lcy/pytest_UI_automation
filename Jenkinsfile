@@ -22,7 +22,7 @@ pipeline {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
                         ssh -o StrictHostKeyChecking=no root@${ECS_IP} '
-                            cd /usr/automation_pipeline/automation_test && 
+                            cd /usr/automation_pipeline/pytest_UI_automation && 
                             /usr/bin/git pull && 
                             docker build -t ${DOCKER_IMAGE} .'
                         """
