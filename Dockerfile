@@ -2,7 +2,33 @@
 FROM registry.cn-hangzhou.aliyuncs.com/lcy-dockerhub/python:3.9.20-slim
 
 # 设置工作目录
-WORKDIR /test_automation
+WORKDIR /pytest_UI_automation
+
+# 安装必要的依赖
+RUN apt-get update && apt-get install -y \
+    wget \
+    unzip \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxi6 \
+    libxtst6 \
+    libxrandr2 \
+    libasound2 \
+    libpangocairo-1.0-0 \
+    libgtk-3-0 \
+    fonts-liberation \
+    libappindicator3-1 \
+    xdg-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# 下载并安装 Google Chrome
+RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    dpkg -i google-chrome-stable_current_amd64.deb || apt-get -fy install && \
+    rm google-chrome-stable_current_amd64.deb
+
 # 复制 requirements.txt 并安装依赖
 COPY requirements.txt .
 
