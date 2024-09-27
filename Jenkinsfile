@@ -1,6 +1,6 @@
 pipeline {
     agent any
-
+    
     environment {
         DOCKER_IMAGE = 'pytest-image-slim'  // pytest slim 镜像名称
         ECS_IP = '8.149.129.172'              // 阿里云 ECS 的 IP 地址
@@ -57,9 +57,7 @@ pipeline {
                         sh """
                         ssh -o StrictHostKeyChecking=no root@${ECS_IP} '
                             echo "Running tests using Docker image ${DOCKER_IMAGE}..."
-                            docker run -v /usr/automation_pipeline/pytest_UI_automation:/pytest_UI_automation ${DOCKER_IMAGE} pytest --alluredir=/pytest_UI_automation/report/allure-results test_suites/ || echo "pytest tests failed"
-                            echo "Checking if allure-results directory exists and is not empty..."
-                            ls -l /usr/automation_pipeline/pytest_UI_automation/report/allure-results
+                            docker run -v /usr/automation_pipeline/pytest_UI_automation:/pytest_UI_automation ${DOCKER_IMAGE} pytest --alluredir=/pytest_UI_automation/report/allure-results test_suites/
                         '
                         """
                     }
@@ -72,7 +70,6 @@ pipeline {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
-                        mkdir -p ${WORKSPACE}/report
                         echo "Copying allure results from ECS..."
                         scp -o StrictHostKeyChecking=no -r root@${ECS_IP}:/usr/automation_pipeline/pytest_UI_automation/report/allure-results ${WORKSPACE}/report/
                         """
@@ -86,7 +83,7 @@ pipeline {
                 allure([
                     reportBuildPolicy: 'ALWAYS',
                     includeProperties: false,
-                    results: [[path: "${WORKSPACE}/report/allure-results"]]
+                    results: [[path: 'report/allure-results']]
                 ])
             }
         }
