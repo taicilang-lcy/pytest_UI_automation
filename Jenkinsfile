@@ -99,7 +99,7 @@ pipeline {
 
     post {
         success {
-            echo 'Tests ran successfully!'
+            echo 'Tests ran successfully! & Send an email'
             script {
                 emailext(
                     subject: "Jenkins Build Successful: ${currentBuild.fullDisplayName}",
@@ -115,7 +115,7 @@ pipeline {
             }
         }
         failure {
-            echo 'Build or tests failed.'
+            echo 'Build or tests failed.& Send an email'
             script {
                 emailext(
                     subject: "Jenkins Build Failed: ${currentBuild.fullDisplayName}",
@@ -132,6 +132,7 @@ pipeline {
         }
         always {
             // 在所有步骤执行完毕后才清理工作区
+            echo '清理工作区'
             cleanWs() // 清理工作区
         }
     }
