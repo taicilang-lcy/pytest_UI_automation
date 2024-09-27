@@ -106,7 +106,7 @@ pipeline {
                     to: "${RECIPIENT}",
                     from: 'liu_congying@163.com',
                     replyTo: 'liu_congying@163.com',
-                    attachmentsPattern: '**/report/allure-results/**/*.json'
+                    attachmentsPattern: 'report/allure-results/**/*'
                 )
             }
         }
@@ -122,7 +122,7 @@ pipeline {
                     to: "${RECIPIENT}",
                     from: 'liu_congying@163.com',
                     replyTo: 'liu_congying@163.com',
-                    attachmentsPattern: '**/report/allure-results/**/*.json'
+                    attachmentsPattern: 'report/allure-results/**/*'
                 )
             }
         }
