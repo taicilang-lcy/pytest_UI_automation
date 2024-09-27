@@ -5,7 +5,6 @@ pipeline {
         DOCKER_IMAGE = 'pytest-image-slim'  // pytest slim 镜像名称
         ECS_IP = '8.149.129.172'              // 阿里云 ECS 的 IP 地址
         SSH_CREDENTIALS = 'ecs-ssh-credentials' // Jenkins 中设置的 SSH 凭据 ID
-        EMAIL_CREDENTIALS = 'email_163_auth_token' // 163 邮箱的凭据 ID
         RECIPIENT = 'liu_congying@163.com'  // 收件人邮箱
     }
 
@@ -107,8 +106,7 @@ pipeline {
                     to: "${RECIPIENT}",
                     from: 'liu_congying@163.com',
                     replyTo: 'liu_congying@163.com',
-                    attachmentsPattern: '**/report/allure-results/**/*.json',
-                    credentialsId: "${EMAIL_CREDENTIALS}"
+                    attachmentsPattern: '**/report/allure-results/**/*.json'
                 )
             }
         }
@@ -124,8 +122,7 @@ pipeline {
                     to: "${RECIPIENT}",
                     from: 'liu_congying@163.com',
                     replyTo: 'liu_congying@163.com',
-                    attachmentsPattern: '**/report/allure-results/**/*.json',
-                    credentialsId: "${EMAIL_CREDENTIALS}"
+                    attachmentsPattern: '**/report/allure-results/**/*.json'
                 )
             }
         }
