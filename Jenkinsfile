@@ -80,6 +80,10 @@ pipeline {
 
         stage('Generate Allure Report') {
             steps {
+                script {
+                    // 在Jenkins 容器里 生成 Allure 报告
+                    sh 'allure generate report/allure-results --clean -o report/allure-reports'
+                }
                 allure([
                     reportBuildPolicy: 'ALWAYS',
                     includeProperties: false,
@@ -110,7 +114,8 @@ pipeline {
                     to: "${RECIPIENT}",
                     from: 'liu_congying@163.com',
                     replyTo: 'liu_congying@163.com',
-                    attachmentsPattern: 'report/allure-results/**/*'
+                    //attachmentsPattern: 'report/allure-results/**/*'
+                    attachmentsPattern: 'report/allure-reports/*'
                 )
             }
         }
@@ -126,7 +131,7 @@ pipeline {
                     to: "${RECIPIENT}",
                     from: 'liu_congying@163.com',
                     replyTo: 'liu_congying@163.com',
-                    attachmentsPattern: 'report/allure-results/**/*'
+                    attachmentsPattern: 'report/allure-reports/*'
                 )
             }
         }
