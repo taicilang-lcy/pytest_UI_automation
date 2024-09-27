@@ -105,6 +105,9 @@ pipeline {
         success {
             echo 'Tests ran successfully! & Send an email'
             script {
+                // 查看 allure-reports 文件夹的内容
+                sh 'ls -R report/allure-reports/'
+
                 // 压缩 allure-reports 文件夹
                 sh 'zip -r report/allure-reports.zip report/allure-reports/*'
                 emailext(
@@ -120,11 +123,14 @@ pipeline {
                 )
             }
             // 清理工作区
-            cleanWs() // 清理工作区
+            //cleanWs() // 清理工作区
         }
         failure {
             echo 'Build or tests failed.& Send an email'
             script {
+                // 查看 allure-reports 文件夹的内容
+                sh 'ls -R report/allure-reports/'
+
                 // 压缩 allure-reports 文件夹
                 sh 'zip -r report/allure-reports.zip report/allure-reports/*'
                 emailext(
@@ -140,7 +146,7 @@ pipeline {
                 )
             }
             // 清理工作区
-            cleanWs() // 清理工作区
+            //cleanWs() // 清理工作区
         }
         always {
             // 在所有步骤执行完毕后才清理工作区
