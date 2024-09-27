@@ -5,6 +5,8 @@ pipeline {
         DOCKER_IMAGE = 'pytest-image-slim'  // pytest slim 镜像名称
         ECS_IP = '8.149.129.172'              // 阿里云 ECS 的 IP 地址
         SSH_CREDENTIALS = 'ecs-ssh-credentials' // Jenkins 中设置的 SSH 凭据 ID
+        EMAIL_CREDENTIALS = 'email_163_auth_token' // 163 邮箱的凭据 ID
+        RECIPIENT = 'liu_congying@163.com'  // 收件人邮箱
     }
 
     stages {
@@ -94,10 +96,38 @@ pipeline {
             cleanWs() // 清理工作区
         }
         success {
-            echo 'Tests ran successfully!' // 成功消息
+            echo 'Tests ran successfully!'
+            script {
+                emailext(
+                    subject: "Jenkins Build Successful: ${currentBuild.fullDisplayName}",
+                    body: """<p>Good news! The Jenkins build <b>${env.JOB_NAME}</b> (#${env.BUILD_NUMBER}) succeeded.</p>
+                            <p>Check the Allure report: ${env.BUILD_URL}allure/</p>""",
+                    mimeType: 'text/html',
+                    recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']],
+                    to: "${RECIPIENT}",
+                    from: 'liu_congying@163.com',
+                    replyTo: 'liu_congying@163.com',
+                    attachmentsPattern: '**/report/allure-results/**/*.json',
+                    credentialsId: "${EMAIL_CREDENTIALS}"
+                )
+            }
         }
         failure {
-            echo 'Build or tests failed.' // 失败消息
+            echo 'Build or tests failed.'
+            script {
+                emailext(
+                    subject: "Jenkins Build Failed: ${currentBuild.fullDisplayName}",
+                    body: """<p>Unfortunately, the Jenkins build <b>${env.JOB_NAME}</b> (#${env.BUILD_NUMBER}) failed.</p>
+                            <p>Please check the details and take necessary actions.</p>""",
+                    mimeType: 'text/html',
+                    recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']],
+                    to: "${RECIPIENT}",
+                    from: 'liu_congying@163.com',
+                    replyTo: 'liu_congying@163.com',
+                    attachmentsPattern: '**/report/allure-results/**/*.json',
+                    credentialsId: "${EMAIL_CREDENTIALS}"
+                )
+            }
         }
     }
 }
