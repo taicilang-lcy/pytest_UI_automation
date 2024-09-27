@@ -105,6 +105,8 @@ pipeline {
         success {
             echo 'Tests ran successfully! & Send an email'
             script {
+                // 压缩 allure-reports 文件夹
+                sh 'zip -r report/allure-reports.zip report/allure-reports/*'
                 emailext(
                     subject: "Jenkins Build Successful: ${currentBuild.fullDisplayName}",
                     body: """<p>Good news! The Jenkins build <b>${env.JOB_NAME}</b> (#${env.BUILD_NUMBER}) succeeded.</p>
@@ -114,14 +116,17 @@ pipeline {
                     to: "${RECIPIENT}",
                     from: 'liu_congying@163.com',
                     replyTo: 'liu_congying@163.com',
-                    //attachmentsPattern: 'report/allure-results/**/*'
-                    attachmentsPattern: 'report/allure-reports/**/*'
+                    attachmentsPattern: 'report/allure-reports.zip'  // 指定压缩文件作为附件
                 )
             }
+            // 清理工作区
+            cleanWs() // 清理工作区
         }
         failure {
             echo 'Build or tests failed.& Send an email'
             script {
+                // 压缩 allure-reports 文件夹
+                sh 'zip -r report/allure-reports.zip report/allure-reports/*'
                 emailext(
                     subject: "Jenkins Build Failed: ${currentBuild.fullDisplayName}",
                     body: """<p>Unfortunately, the Jenkins build <b>${env.JOB_NAME}</b> (#${env.BUILD_NUMBER}) failed.</p>
@@ -131,14 +136,16 @@ pipeline {
                     to: "${RECIPIENT}",
                     from: 'liu_congying@163.com',
                     replyTo: 'liu_congying@163.com',
-                    attachmentsPattern: 'report/allure-reports/**/*'
+                    attachmentsPattern: 'report/allure-reports.zip'  // 指定压缩文件作为附件
                 )
             }
+            // 清理工作区
+            cleanWs() // 清理工作区
         }
         always {
             // 在所有步骤执行完毕后才清理工作区
-            echo '清理工作区'
-            //cleanWs() // 清理工作区
+            echo '所有步骤执行完毕'
         }
     }
+
 }
