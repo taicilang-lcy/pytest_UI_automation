@@ -98,9 +98,6 @@ pipeline {
     }
 
     post {
-        always {
-            cleanWs() // 清理工作区
-        }
         success {
             echo 'Tests ran successfully!'
             script {
@@ -132,6 +129,10 @@ pipeline {
                     attachmentsPattern: 'report/allure-results/**/*'
                 )
             }
+        }
+        always {
+            // 在所有步骤执行完毕后才清理工作区
+            cleanWs() // 清理工作区
         }
     }
 }
