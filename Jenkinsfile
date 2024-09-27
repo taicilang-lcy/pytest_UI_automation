@@ -65,13 +65,23 @@ pipeline {
             }
         }
 
+        // 添加一个检查当前工作空间路径的步骤
+        stage('Check Workspace Path') {
+            steps {
+                script {
+                    sh "echo 'Current workspace path: ${WORKSPACE}'"
+                    sh "pwd"
+                }
+            }
+        }
+
         stage('Copy Allure Results') {
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
                         echo "Copying allure results from ECS..."
-                        scp -o StrictHostKeyChecking=no -r root@${ECS_IP}:/usr/automation_pipeline/pytest_UI_automation/report/allure-results ${WORKSPACE}/report/
+                        scp -o StrictHostKeyChecking=no -r root@${ECS_IP}:/usr/automation_pipeline/pytest_UI_automation/report/allure-results ${WORKSPACE}@tmp/report/
                         """
                     }
                 }
