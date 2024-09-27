@@ -123,7 +123,7 @@ pipeline {
                 )
             }
             // 清理工作区
-            //cleanWs() // 清理工作区
+            cleanWs() // 清理工作区
         }
         failure {
             echo 'Build or tests failed.& Send an email'
@@ -146,7 +146,7 @@ pipeline {
                 )
             }
             // 清理工作区
-            //cleanWs() // 清理工作区
+            cleanWs() // 清理工作区
         }
         always {
             // 在所有步骤执行完毕后才清理工作区
