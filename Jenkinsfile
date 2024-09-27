@@ -11,7 +11,6 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                // 从 GitHub 仓库克隆代码，使用 HTTPS 方式
                 git branch: 'main', url: 'https://github.com/taicilang-lcy/pytest_UI_automation.git', credentialsId: 'github-automation-test-token'
             }
         }
@@ -86,6 +85,14 @@ pipeline {
                     includeProperties: false,
                     results: [[path: 'report/allure-results']]
                 ])
+            }
+        }
+
+        stage('List Allure Results') {
+            steps {
+                script {
+                    sh "ls -l ${WORKSPACE}/report/allure-results"
+                }
             }
         }
     }
