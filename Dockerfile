@@ -35,13 +35,9 @@ RUN echo "deb http://mirrors.aliyun.com/debian/ stable main contrib non-free" > 
     && rm -rf /var/lib/apt/lists/*
 
 # 下载并安装 Google Chrome
-#RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-#    dpkg -i google-chrome-stable_current_amd64.deb || apt-get -fy install && \
-#    rm google-chrome-stable_current_amd64.deb
-
-RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_114.0.5735.90-1_amd64.deb && \
-    dpkg -i google-chrome-stable_114.0.5735.90-1_amd64.deb || apt-get -fy install && \
-    rm google-chrome-stable_114.0.5735.90-1_amd64.deb
+RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    dpkg -i google-chrome-stable_current_amd64.deb || apt-get -fy install && \
+    rm google-chrome-stable_current_amd64.deb
 
 # 检查 Chrome 版本
 RUN google-chrome --version
