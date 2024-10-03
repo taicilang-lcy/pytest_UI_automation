@@ -32,11 +32,11 @@ def browser():
         chrome_options.add_argument('--headless') # 无头模式
         chrome_options.add_argument('--disable-dev-shm-usage')  # 禁用 /dev/shm 使用
         #chrome_options.add_argument('--remote-debugging-pipe')
-        chrome_options.add_argument('--disable-application-cache')
-        chrome_options.add_argument('--disable-extensions')
-        chrome_options.add_argument("--enable-logging")
-        chrome_options.add_argument("--v=1")  # 增加日志级别
-        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+        #chrome_options.add_argument("--enable-logging")
+        #chrome_options.add_argument("--v=1")  # 增加日志级别
+
+        #driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
         logger.info("Starting test session setup, Chrome has been launched!")
 
