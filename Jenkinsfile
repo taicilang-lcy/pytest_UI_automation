@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/taicilang-lcy/pytest_UI_automation.git', credentialsId: 'Jenkins-Github-ID'
+                git branch: 'main', url: 'https://github.com/taicilang-lcy/pytest_UI_automation.git', credentialsId: 'Jenkins-lcygithub-ID'
             }
         }
 
