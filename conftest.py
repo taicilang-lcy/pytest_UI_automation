@@ -26,17 +26,20 @@ def browser():
     if driver is None:
         # for CICD container automation running
         chrome_options = Options()
-        #chrome_options.add_argument('window-size=1920x1080')  # 设置浏览器窗口大小
-        chrome_options.add_argument("--disable-gpu")  # 禁用 GPU 加速
+        chrome_options.add_argument('window-size=1920x1080')  # 设置浏览器窗口大小
+        #chrome_options.add_argument("--disable-gpu")  # 禁用 GPU 加速
         chrome_options.add_argument("--no-sandbox")  #  取消沙盒模式
         #chrome_options.add_argument('--headless') # 无头模式
         chrome_options.add_argument('--disable-dev-shm-usage')  # 禁用 /dev/shm 使用
-        chrome_options.add_argument('--remote-debugging-pipe')
+        chrome_options.add_argument("--remote-debugging-port=9222")  # 设置调试端口
+        #chrome_options.add_argument('--remote-debugging-pipe')
         chrome_options.add_argument("--enable-logging")
-        #chrome_options.add_argument("--v=1")  # 增加日志级别
+        chrome_options.add_argument("--v=1")  # 增加日志级别
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
 
         logger.info("Starting test session setup, Chrome has been launched!")
+
+        print(driver.capabilities)  # 输出浏览器的能力信息，包括版本
 
         # 获取浏览器和 WebDriver 版本信息
         browser_version = driver.capabilities['browserVersion']
