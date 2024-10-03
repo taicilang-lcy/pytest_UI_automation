@@ -29,7 +29,7 @@ def browser():
         #chrome_options.add_argument('window-size=1920x1080')  # 设置浏览器窗口大小
         chrome_options.add_argument("--disable-gpu")  # 禁用 GPU 加速
         chrome_options.add_argument("--no-sandbox")  #  取消沙盒模式
-        chrome_options.add_argument('--headless') # 无头模式
+        #chrome_options.add_argument('--headless') # 无头模式
         chrome_options.add_argument('--disable-dev-shm-usage')  # 禁用 /dev/shm 使用
         chrome_options.add_argument('--remote-debugging-pipe')
         chrome_options.add_argument("--enable-logging")
