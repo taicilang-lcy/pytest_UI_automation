@@ -20,9 +20,9 @@ pipeline {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
-                        ssh -vvv -o StrictHostKeyChecking=no root@${ECS_IP} '
-                            echo "Connected to ECS";
-                            cd /usr/automation_pipeline/pytest_UI_automation && /usr/bin/git pull
+                        ssh -o StrictHostKeyChecking=no root@${ECS_IP} '
+                            cd /usr/automation_pipeline/pytest_UI_automation &&
+                            /usr/bin/git pull
                         '
                         """
                     }
