@@ -1,0 +1,30 @@
+# 使用 selenium/standalone-chrome 作为基础镜像
+FROM selenium/standalone-chrome:latest
+
+# 设置工作目录
+WORKDIR /pytest_UI_automation
+
+# 设置阿里云的 apt 源并安装必要的依赖
+RUN echo "deb http://mirrors.aliyun.com/debian/ stable main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb-src http://mirrors.aliyun.com/debian/ stable main contrib non-free" >> /etc/apt/sources.list && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    wget \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# 升级 pip
+RUN pip3 install --upgrade pip -i https://mirrors.aliyun.com/pypi/simple
+
+# 复制 requirements.txt 并安装依赖
+COPY requirements.txt .
+
+# 安装 Python 依赖
+RUN pip3 install --no-cache-dir -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple --timeout=400
+
+# 复制项目代码
+COPY . .
+
+# 设置默认命令，运行 test_suites 目录下的测试，并将 Allure 结果生成到 report/allure-results 目录
+#CMD ["pytest", "test_suites/", "--alluredir=report/allure-results"]  # 在 Jenkinsfile 中定义
