@@ -17,9 +17,10 @@ from utils.testdata_file import load_yaml_data
 test_data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'test_data', 'test_data1.yaml')
 
 
-def test_open_baidu(driver):
+def test_open_baidu(browser):
     # 打开百度
-    driver.get("https://www.baidu.com")
+    hp = HomePage(browser)
+    hp.get_url("https://www.baidu.com/")
 
 # @pytest.mark.parametrize("url, search_keyword", load_yaml_data(test_data_path, 'test_cases', ['url', 'search_keyword']))
 # def test_baidu_01(browser, url, search_keyword):
