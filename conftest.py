@@ -35,8 +35,8 @@ def browser():
         #chrome_options.add_argument("--enable-logging")
         #chrome_options.add_argument("--v=1")  # 增加日志级别
 
-        #driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
-        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+        #driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
         logger.info("Starting test session setup, Chrome has been launched!")
 
