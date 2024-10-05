@@ -17,27 +17,20 @@ from utils.testdata_file import load_yaml_data
 test_data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'test_data', 'test_data1.yaml')
 
 
-def test_open_baidu(browser):
-    # 打开百度
-    hp = HomePage(browser)
-    hp.get_url("https://www.baidu.com/")
-
-# @pytest.mark.parametrize("url, search_keyword", load_yaml_data(test_data_path, 'test_cases', ['url', 'search_keyword']))
-# def test_baidu_01(browser, url, search_keyword):
+# def test_open_baidu(browser):
+#     # 打开百度
 #     hp = HomePage(browser)
-#     # hp.get_url("https://www.baidu.com/")
-#     # hp.bd_search('automation pytest')
-#     hp.get_url(url)
-#     hp.bd_search(search_keyword)
-#
-#
-# def test_baidu_02(browser):
-#     bs = BaiduSearchDetailPage(browser)
-#     bs.search_res_Click()
+#     hp.get_url("https://www.baidu.com/")
 
+@pytest.mark.parametrize("url, search_keyword", load_yaml_data(test_data_path, 'test_cases', ['url', 'search_keyword']))
+def test_baidu_01(browser, url, search_keyword):
+    hp = HomePage(browser)
+    # hp.get_url("https://www.baidu.com/")
+    # hp.bd_search('automation pytest')
+    hp.get_url(url)
+    hp.bd_search(search_keyword)
 
-# def test_baidu_03(browser):
-#     pass
+def test_baidu_02(browser):
+    bs = BaiduSearchDetailPage(browser)
+    bs.search_res_Click()
 
-# if __name__ == '__main__':
-#     pytest.main()
