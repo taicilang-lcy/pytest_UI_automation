@@ -52,7 +52,7 @@ RUN pip install --upgrade pip -i https://mirrors.aliyun.com/pypi/simple
 RUN pip install --no-cache-dir -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple --timeout=400
 
 # 复制项目代码
-COPY . .
+# COPY . .
 
 # 设置默认命令，运行 test_suites 目录下的测试，并将 Allure 结果生成到 report/allure-results 目录
 # 这里去掉，命令在Jenkinsfile里定义，会更灵活
