@@ -128,7 +128,7 @@ pipeline {
                 )
             }
             // 清理工作区
-            cleanWs() // 清理工作区
+            //cleanWs() // 清理工作区
         }
         failure {
             echo 'Build or tests failed.& Send an email'
