@@ -64,6 +64,10 @@ pipeline {
                             BUILD_TIMESTAMP="${BUILD_TIMESTAMP}"  // 在远程主机上定义 BUILD_TIMESTAMP
                             docker run --name \${CONTAINER_NAME} -v /usr/automation_pipeline/pytest_UI_automation:/pytest_UI_automation ${DOCKER_IMAGE} pytest -v -s --alluredir=/allure-results-\${BUILD_TIMESTAMP} test_suites/
                             docker rm -f \${CONTAINER_NAME} || true
+
+                            # 确认 Allure 结果是否生成
+                            echo "Checking Allure results directory..."
+                            ls -l /usr/automation_pipeline/pytest_UI_automation/report/allure-results-\${BUILD_TIMESTAMP}
                         '
                         """
                     }
