@@ -1,11 +1,14 @@
 pipeline {
     agent any
-    
+
     environment {
         DOCKER_IMAGE = 'pytest-image-slim'  // pytest slim 镜像名称
         ECS_IP = '8.149.129.172'              // 阿里云 ECS 的 IP 地址
         SSH_CREDENTIALS = 'ecs-ssh-credentials' // Jenkins 中设置的 SSH 凭据 ID
         RECIPIENT = 'liu_congying@163.com'  // 收件人邮箱
+        BUILD_TIMESTAMP = "${new Date().format('yyyyMMdd_HHmmss')}" // 每次构建的唯一时间戳
+        BUILD_RESULTS_DIR = "/usr/automation_pipeline/pytest_UI_automation/report/allure-results-${BUILD_TIMESTAMP}" // ECS 上的结果目录
+        BUILD_REPORTS_DIR = "/usr/automation_pipeline/pytest_UI_automation/report/allure-reports-${BUILD_TIMESTAMP}" // ECS 上的报告目录
     }
 
     stages {
@@ -58,7 +61,7 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no root@${ECS_IP} '
                             echo "Running tests using Docker image ${DOCKER_IMAGE}..."
                             CONTAINER_NAME=pytest_container_\$(date +%Y%m%d_%H%M%S)
-                            docker run --name \${CONTAINER_NAME} -v /usr/automation_pipeline/pytest_UI_automation:/pytest_UI_automation ${DOCKER_IMAGE} pytest -v -s --alluredir=/pytest_UI_automation/report/allure-results test_suites/
+                            docker run --name \${CONTAINER_NAME} -v /usr/automation_pipeline/pytest_UI_automation:/pytest_UI_automation ${DOCKER_IMAGE} pytest -v -s --alluredir=${BUILD_RESULTS_DIR} test_suites/
                         '
                         """
                     }
@@ -72,7 +75,7 @@ pipeline {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
                         echo "Copying allure results from ECS..."
-                        scp -o StrictHostKeyChecking=no -r root@${ECS_IP}:/usr/automation_pipeline/pytest_UI_automation/report/allure-results ${WORKSPACE}/report/
+                        scp -o StrictHostKeyChecking=no -r root@${ECS_IP}:${BUILD_RESULTS_DIR}/* ${WORKSPACE}/report/allure-results-${BUILD_TIMESTAMP}/
                         """
                     }
                 }
@@ -82,13 +85,13 @@ pipeline {
         stage('Generate Allure Report') {
             steps {
                 script {
-                    // 在Jenkins 容器里 生成 Allure 报告
-                    sh 'allure generate report/allure-results --clean -o report/allure-reports'
+                    // 生成 Allure 报告到唯一的报告目录
+                    sh "allure generate ${WORKSPACE}/report/allure-results-${BUILD_TIMESTAMP} --clean -o ${WORKSPACE}/report/allure-reports-${BUILD_TIMESTAMP}"
                 }
                 allure([
                     reportBuildPolicy: 'ALWAYS',
                     includeProperties: false,
-                    results: [[path: 'report/allure-results']]
+                    results: [[path: "${WORKSPACE}/report/allure-results-${BUILD_TIMESTAMP}"]]
                 ])
             }
         }
@@ -96,7 +99,7 @@ pipeline {
         stage('List Allure Results') {
             steps {
                 script {
-                    sh "ls -l ${WORKSPACE}/report/allure-results"
+                    sh "ls -l ${WORKSPACE}/report/allure-results-${BUILD_TIMESTAMP}"
                 }
             }
         }
@@ -107,10 +110,10 @@ pipeline {
             echo 'Tests ran successfully! & Send an email'
             script {
                 // 查看 allure-reports 文件夹的内容
-                sh 'ls -R report/allure-reports/'
+                sh "ls -R ${WORKSPACE}/report/allure-reports-${BUILD_TIMESTAMP}"
 
                 // 压缩 allure-reports 文件夹
-                sh 'zip -r report/allure-reports.zip report/allure-reports/*'
+                sh "zip -r ${WORKSPACE}/report/allure-reports-${BUILD_TIMESTAMP}.zip ${WORKSPACE}/report/allure-reports-${BUILD_TIMESTAMP}/*"
                 emailext(
                     subject: "Jenkins Build Successful: ${currentBuild.fullDisplayName}",
                     body: """<p>Good news! The Jenkins build <b>${env.JOB_NAME}</b> (#${env.BUILD_NUMBER}) succeeded.</p>
@@ -120,7 +123,7 @@ pipeline {
                     to: "${RECIPIENT}",
                     from: 'liu_congying@163.com',
                     replyTo: 'liu_congying@163.com',
-                    attachmentsPattern: 'report/allure-reports.zip'  // 指定压缩文件作为附件
+                    attachmentsPattern: "${WORKSPACE}/report/allure-reports-${BUILD_TIMESTAMP}.zip"  // 指定压缩文件作为附件
                 )
             }
             // 清理工作区
@@ -130,10 +133,10 @@ pipeline {
             echo 'Build or tests failed.& Send an email'
             script {
                 // 查看 allure-reports 文件夹的内容
-                sh 'ls -R report/allure-reports/'
+                sh "ls -R ${WORKSPACE}/report/allure-reports-${BUILD_TIMESTAMP}"
 
                 // 压缩 allure-reports 文件夹
-                sh 'zip -r report/allure-reports.zip report/allure-reports/*'
+                sh "zip -r ${WORKSPACE}/report/allure-reports-${BUILD_TIMESTAMP}.zip ${WORKSPACE}/report/allure-reports-${BUILD_TIMESTAMP}/*"
                 emailext(
                     subject: "Jenkins Build Failed: ${currentBuild.fullDisplayName}",
                     body: """<p>Unfortunately, the Jenkins build <b>${env.JOB_NAME}</b> (#${env.BUILD_NUMBER}) failed.</p>
@@ -143,16 +146,14 @@ pipeline {
                     to: "${RECIPIENT}",
                     from: 'liu_congying@163.com',
                     replyTo: 'liu_congying@163.com',
-                    attachmentsPattern: 'report/allure-reports.zip'  // 指定压缩文件作为附件
+                    attachmentsPattern: "${WORKSPACE}/report/allure-reports-${BUILD_TIMESTAMP}.zip"  // 指定压缩文件作为附件
                 )
             }
             // 清理工作区
             cleanWs() // 清理工作区
         }
         always {
-            // 在所有步骤执行完毕后才清理工作区
             echo '所有步骤执行完毕'
         }
     }
-
 }
