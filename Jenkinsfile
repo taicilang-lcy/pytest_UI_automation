@@ -61,7 +61,8 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no root@${ECS_IP} '
                             echo "Running tests using Docker image ${DOCKER_IMAGE}..."
                             CONTAINER_NAME=pytest_container_\$(date +%Y%m%d_%H%M%S)
-                            docker run --name \${CONTAINER_NAME} -v /usr/automation_pipeline/pytest_UI_automation:/pytest_UI_automation -v ${BUILD_RESULTS_DIR}:/allure-results ${DOCKER_IMAGE} pytest -v -s --alluredir=/allure-results test_suites/
+                            BUILD_TIMESTAMP="${BUILD_TIMESTAMP}"  // 在远程主机上定义 BUILD_TIMESTAMP
+                            docker run --name \${CONTAINER_NAME} -v /usr/automation_pipeline/pytest_UI_automation:/pytest_UI_automation ${DOCKER_IMAGE} pytest -v -s --alluredir=/allure-results-\${BUILD_TIMESTAMP} test_suites/
                             docker rm -f \${CONTAINER_NAME} || true
                         '
                         """
@@ -76,7 +77,9 @@ pipeline {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
                         echo "Copying allure results from ECS..."
-                        scp -o StrictHostKeyChecking=no -r root@${ECS_IP}:${BUILD_RESULTS_DIR}/* ${WORKSPACE}/report/allure-results-${BUILD_TIMESTAMP}/
+                        # 在远程 ECS 上构建 BUILD_RESULTS_DIR
+                        BUILD_RESULTS_DIR="/usr/automation_pipeline/pytest_UI_automation/report/allure-results-${BUILD_TIMESTAMP}"
+                        scp -o StrictHostKeyChecking=no -r root@${ECS_IP}:\${BUILD_RESULTS_DIR}/* ${WORKSPACE}/report/allure-results-${BUILD_TIMESTAMP}/
                         """
                     }
                 }
