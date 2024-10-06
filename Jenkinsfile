@@ -69,6 +69,23 @@ pipeline {
             }
         }
 
+        stage('Run Tests in Docker on ECS') {
+            steps {
+                script {
+                    sshagent([SSH_CREDENTIALS]) {
+                        sh """
+                        ssh -o StrictHostKeyChecking=no root@${ECS_IP} '
+                            echo "Running tests using Docker image ${DOCKER_IMAGE}..."
+                            CONTAINER_NAME=pytest_container_\$(date +%Y%m%d_%H%M%S)
+                            docker run --name \${CONTAINER_NAME} -v /usr/automation_pipeline/pytest_UI_automation:/pytest_UI_automation -v ${BUILD_RESULTS_DIR}:/allure-results ${DOCKER_IMAGE} pytest -v -s --alluredir=/allure-results test_suites/
+                            docker rm -f \${CONTAINER_NAME} || true
+                        '
+                        """
+                    }
+                }
+            }
+        }
+
         stage('Copy Allure Results') {
             steps {
                 script {
